@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    /* Subtle diagonal stripe textures matching the Gaston UI showcase dark background */
+    .gaston-stripes-bg {
+        background-color: #080a0f;
+        background-image: 
+            repeating-linear-gradient(
+                -45deg,
+                rgba(229, 9, 20, 0.04) 0px,
+                rgba(229, 9, 20, 0.04) 1.5px,
+                transparent 1.5px,
+                transparent 22px
+            ),
+            repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.015) 0px,
+                rgba(255, 255, 255, 0.015) 1px,
+                transparent 1px,
+                transparent 16px
+            );
+    }
+
+    .gaston-diagonal-lines {
+        background-image: 
+            repeating-linear-gradient(
+                -45deg,
+                rgba(229, 9, 20, 0.045) 0px,
+                rgba(229, 9, 20, 0.045) 1.5px,
+                transparent 1.5px,
+                transparent 22px
+            ),
+            repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.015) 0px,
+                rgba(255, 255, 255, 0.015) 1px,
+                transparent 1px,
+                transparent 16px
+            );
+    }
+
+    /* Red decorative angle slash graphics matching right side of desktop */
+    .gaston-accent-slashes {
+        position: relative;
+    }
+    .gaston-accent-slashes::before {
+        content: '';
+        position: absolute;
+        width: 140px;
+        height: 5px;
+        background: linear-gradient(90deg, #e50914, transparent);
+        transform: rotate(-35deg);
+        pointer-events: none;
+    }
+
+    /* Premium card surfaces */
+    .gaston-card {
+        background-color: #11141c;
+        border: 1px solid #1f2533;
+    }
+
+    .gaston-card-elevated {
+        background-color: #141822;
+        border: 1px solid #232936;
+    }
+
+    .gaston-glass {
+        background: linear-gradient(135deg, rgba(20, 24, 34, 0.85) 0%, rgba(14, 17, 24, 0.95) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .gaston-glass-hover {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gaston-glass-hover:hover {
+        background: linear-gradient(135deg, rgba(24, 29, 41, 0.92) 0%, rgba(16, 20, 28, 0.98) 100%);
+        border-color: rgba(229, 9, 20, 0.45);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px -5px rgba(229, 9, 20, 0.3);
+    }
+
+    /* Gradients & Glows */
+    .gaston-gradient-red {
+        background: linear-gradient(135deg, #e50914 0%, #dc2626 50%, #b91c1c 100%);
+    }
+
+    .gaston-btn-red {
+        background: linear-gradient(90deg, #e50914 0%, #ef4444 100%);
+        box-shadow: 0 4px 20px rgba(229, 9, 20, 0.35);
+    }
+    .gaston-btn-red:hover {
+        background: linear-gradient(90deg, #ff1e27 0%, #f87171 100%);
+        box-shadow: 0 6px 25px rgba(229, 9, 20, 0.5);
+    }
+
+    .gaston-glow {
+        box-shadow: 0 0 25px rgba(229, 9, 20, 0.35);
+    }
+    .gaston-glow-lg {
+        box-shadow: 0 0 45px rgba(229, 9, 20, 0.5);
+    }
+    .gaston-glow-border {
+        border-color: rgba(229, 9, 20, 0.6);
+        box-shadow: inset 0 0 15px rgba(229, 9, 20, 0.15), 0 0 20px rgba(229, 9, 20, 0.25);
+    }
+
+    .gaston-ring-pulsing {
+        box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7);
+        animation: gastonPulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+
+    /* Diagonal slash background corner decoration */
+    .gaston-angled-backdrop {
+        position: relative;
+    }
+    .gaston-angled-backdrop::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: 
+            linear-gradient(135deg, transparent 70%, rgba(229, 9, 20, 0.08) 85%, transparent 100%),
+            repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.015) 0px,
+                rgba(255, 255, 255, 0.015) 2px,
+                transparent 2px,
+                transparent 20px
+            );
+        pointer-events: none;
+    }
+}
+
+@keyframes gastonPulse {
+    to {
+        box-shadow: 0 0 0 20px rgba(229, 9, 20, 0);
+    }
+}
+
+@keyframes splashProgress {
+    0% {
+        width: 15%;
+        margin-left: 0;
+    }
+    50% {
+        width: 65%;
+        margin-left: 20%;
+    }
+    100% {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+.animate-splash-progress {
+    animation: splashProgress 1.6s ease-in-out infinite;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #080a0f;
+}
+::-webkit-scrollbar-thumb {
+    background: #1f2533;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #e50914;
+}
+
+/* Custom Flatpickr Calendar Dark Theme */
+.flatpickr-calendar {
+    background: #141822 !important;
+    border: 1px solid #232936 !important;
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.8), 0 0 25px rgba(229, 9, 20, 0.15) !important;
+    border-radius: 1.25rem !important;
+    overflow: hidden !important;
+    font-family: inherit !important;
+}
+.flatpickr-calendar .flatpickr-months {
+    background: #0e1118 !important;
+    border-bottom: 1px solid #232936 !important;
+    border-radius: 1.25rem 1.25rem 0 0 !important;
+    padding: 8px 4px !important;
+}
+.flatpickr-calendar .flatpickr-month {
+    color: #fff !important;
+    fill: #fff !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: #0e1118 !important;
+    color: #e50914 !important;
+    font-weight: 800 !important;
+}
+.flatpickr-current-month input.cur-year {
+    color: #fff !important;
+    font-weight: 800 !important;
+}
+.flatpickr-day {
+    color: #cbd5e1 !important;
+    border-radius: 0.75rem !important;
+    font-weight: 600 !important;
+}
+.flatpickr-day:hover {
+    background: #232936 !important;
+    color: #fff !important;
+}
+.flatpickr-day.selected, .flatpickr-day.selected:hover {
+    background: linear-gradient(135deg, #e50914, #dc2626) !important;
+    border-color: #e50914 !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4) !important;
+}
+.flatpickr-day.today {
+    border-color: #e50914 !important;
+}
+span.flatpickr-weekday {
+    color: #94a3b8 !important;
+    font-weight: 700 !important;
+}

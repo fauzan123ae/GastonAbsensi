@@ -12,6 +12,11 @@
     </div>
 
     <!-- Status Hari Ini Card matching Phone 4 -->
+    @php
+        $firstTodaySession = $todaySessions->first();
+        $firstTodayAttendance = $firstTodaySession ? $todayAttendances->get($firstTodaySession->id) : null;
+        $firstTodayPermission = $firstTodaySession ? $todayPermissions->get($firstTodaySession->id) : null;
+    @endphp
     <div class="bg-[#11141c] border border-[#1f2533] rounded-3xl p-5 shadow-2xl relative overflow-hidden">
         <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold text-slate-400">Status Hari Ini</span>
@@ -21,14 +26,36 @@
         </div>
 
         <div class="mt-3 flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span class="text-base font-black text-emerald-400">Hadir</span>
+            @if($firstTodayAttendance && $firstTodayAttendance->status === 'present')
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span class="text-base font-black text-emerald-400">Sudah Hadir</span>
+                @if($firstTodaySession)
+                    <span class="text-xs text-slate-400 font-semibold">• {{ $firstTodaySession->sport->name }}</span>
+                @endif
+            @elseif($firstTodayPermission && $firstTodayPermission->status === 'approved')
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+                <span class="text-base font-black text-blue-400">Izin Disetujui</span>
+                @if($firstTodaySession)
+                    <span class="text-xs text-slate-400 font-semibold">• {{ $firstTodaySession->sport->name }}</span>
+                @endif
+            @elseif($todaySessions->isNotEmpty())
+                <span class="w-2.5 h-2.5 rounded-full bg-[#e50914] animate-pulse"></span>
+                <span class="text-base font-black text-[#e50914]">Belum Absen</span>
+                @if($firstTodaySession)
+                    <span class="text-xs text-slate-400 font-semibold">• {{ $firstTodaySession->sport->name }}</span>
+                @endif
+            @else
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                <span class="text-base font-black text-slate-400">Tidak Ada Sesi Hari Ini</span>
+            @endif
         </div>
         <p class="text-[11px] font-mono text-slate-400 mt-1">
-            @if($upcomingSession)
-                {{ substr($upcomingSession->start_time, 0, 5) }} - {{ substr($upcomingSession->end_time, 0, 5) }}
+            @if($firstTodaySession)
+                {{ substr($firstTodaySession->start_time, 0, 5) }} - {{ substr($firstTodaySession->end_time, 0, 5) }} WIB ({{ $firstTodaySession->location->name }})
+            @elseif($upcomingSession)
+                Sesi Berikutnya: {{ substr($upcomingSession->start_time, 0, 5) }} - {{ substr($upcomingSession->end_time, 0, 5) }} WIB
             @else
-                07:32 - 16:45
+                Tidak ada agenda hari ini
             @endif
         </p>
     </div>

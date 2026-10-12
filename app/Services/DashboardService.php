@@ -136,9 +136,32 @@ class DashboardService
             $attendanceRate = round(($registeredPresent / $effectiveRegistered) * 100, 1);
         }
 
+        // 3. Today's sessions for this member / active today
+        $today = now()->toDateString();
+        $todaySessions = SportSession::with(['sport', 'location'])
+            ->whereDate('date', $today)
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('start_time')
+            ->get();
+
+        $todaySessionIds = $todaySessions->pluck('id');
+
+        $todayAttendances = Attendance::where('user_id', $user->id)
+            ->whereIn('session_id', $todaySessionIds)
+            ->get()
+            ->keyBy('session_id');
+
+        $todayPermissions = PermissionRequest::where('user_id', $user->id)
+            ->whereIn('session_id', $todaySessionIds)
+            ->get()
+            ->keyBy('session_id');
+
         return compact(
             'user',
             'upcomingSession',
+            'todaySessions',
+            'todayAttendances',
+            'todayPermissions',
             'totalRegistered',
             'totalPresent',
             'totalPermission',

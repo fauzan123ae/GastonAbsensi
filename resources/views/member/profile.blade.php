@@ -128,13 +128,76 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                    <span class="font-bold text-white text-xs block">Bantuan</span>
+                    <span class="font-bold text-white text-xs block">Bantuan & FAQ</span>
                     <span class="text-[10px] text-slate-400">Pusat bantuan & kontak admin Gaston</span>
                 </div>
             </div>
             <div class="flex items-center space-x-1">
                 <span x-show="activeTab === 'bantuan'" class="text-[10px] text-[#e50914] font-bold uppercase tracking-wider mr-1">Aktif</span>
                 <svg class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="activeTab === 'bantuan' ? 'rotate-90 text-[#e50914]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+        </button>
+
+        <!-- Jadwal Shift Mingguan -->
+        <button type="button"
+                @click="activeTab = (activeTab === 'shift' ? '' : 'shift')"
+                class="w-full p-3.5 flex items-center justify-between text-xs text-left transition-all rounded-2xl group"
+                :class="activeTab === 'shift' ? 'bg-[#181d29] text-white' : 'text-slate-300 hover:bg-[#151922]'">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                     :class="activeTab === 'shift' ? 'bg-[#e50914]/20 text-[#e50914]' : 'bg-[#151922] text-[#e50914]'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-xs block">Jadwal Shift Mingguan</span>
+                    <span class="text-[10px] text-slate-400">Pembagian shift & jadwal pelatih</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1">
+                <span x-show="activeTab === 'shift'" class="text-[10px] text-[#e50914] font-bold uppercase tracking-wider mr-1">Aktif</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="activeTab === 'shift' ? 'rotate-90 text-[#e50914]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+        </button>
+
+        <!-- Kebijakan Absensi -->
+        <button type="button"
+                @click="activeTab = (activeTab === 'kebijakan' ? '' : 'kebijakan')"
+                class="w-full p-3.5 flex items-center justify-between text-xs text-left transition-all rounded-2xl group"
+                :class="activeTab === 'kebijakan' ? 'bg-[#181d29] text-white' : 'text-slate-300 hover:bg-[#151922]'">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                     :class="activeTab === 'kebijakan' ? 'bg-[#e50914]/20 text-[#e50914]' : 'bg-[#151922] text-slate-400 group-hover:text-white'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-xs block">Kebijakan Absensi</span>
+                    <span class="text-[10px] text-slate-400">Aturan kehadiran, izin & cuti</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1">
+                <span x-show="activeTab === 'kebijakan'" class="text-[10px] text-[#e50914] font-bold uppercase tracking-wider mr-1">Aktif</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="activeTab === 'kebijakan' ? 'rotate-90 text-[#e50914]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+        </button>
+
+        <!-- Libur Nasional -->
+        <button type="button"
+                @click="activeTab = (activeTab === 'libur' ? '' : 'libur')"
+                class="w-full p-3.5 flex items-center justify-between text-xs text-left transition-all rounded-2xl group"
+                :class="activeTab === 'libur' ? 'bg-[#181d29] text-white' : 'text-slate-300 hover:bg-[#151922]'">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                     :class="activeTab === 'libur' ? 'bg-[#e50914]/20 text-[#e50914]' : 'bg-[#151922] text-[#e50914]'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-xs block">Libur Nasional & Cuti</span>
+                    <span class="text-[10px] text-slate-400">Kalender operasional kegiatan olahraga</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1">
+                <span x-show="activeTab === 'libur'" class="text-[10px] text-[#e50914] font-bold uppercase tracking-wider mr-1">Aktif</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform duration-200" :class="activeTab === 'libur' ? 'rotate-90 text-[#e50914]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </div>
         </button>
     </div>
@@ -359,6 +422,161 @@
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.966.527 1.83.81 2.791.81 3.181 0 5.767-2.587 5.767-5.766.001-3.181-2.585-5.796-5.767-5.796zm0 10.435c-.886 0-1.748-.239-2.502-.686l-.179-.107-1.859.488.497-1.812-.117-.187c-.496-.789-.757-1.706-.757-2.56 0-2.617 2.129-4.746 4.747-4.746 2.617 0 4.746 2.129 4.747 4.746 0 2.618-2.129 4.866-4.738 4.866z"/></svg>
                 <span>Hubungi Admin Gaston via WhatsApp</span>
             </a>
+        </div>
+    </div>
+
+    <!-- TAB 5: JADWAL SHIFT MINGGUAN CONTENT -->
+    <div x-show="activeTab === 'shift'"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         style="display: none;"
+         class="bg-[#11141c] border border-[#1f2533] rounded-3xl p-6 shadow-xl space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#1f2533]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-[#e50914]"></span>
+                <span>Jadwal Shift & Sesi Mingguan</span>
+            </h3>
+            <span class="text-[10px] text-slate-500 font-mono">{{ now()->translatedFormat('d M Y') }}</span>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed">
+            Berikut jadwal pembagian shift pelatih dan operasional venue olahraga Gaston YK minggu ini:
+        </p>
+
+        <div class="space-y-3">
+            <div class="p-4 rounded-2xl bg-[#0d1017] border border-[#1f2533] space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                        Shift Pagi (07:00 - 15:00 WIB)
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-mono">GOR Manahan</span>
+                </div>
+                <div class="space-y-1 text-xs">
+                    <p class="text-white font-bold">Cabang: <span class="font-normal text-slate-300">Badminton & Tenis Lapangan</span></p>
+                    <p class="text-slate-400 text-[11px]">Koordinator: Coach Bambang & Tim Lapangan</p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#0d1017] border border-[#1f2533] space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                        Shift Sore & Malam (15:00 - 22:00 WIB)
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-mono">GOR Kartasura</span>
+                </div>
+                <div class="space-y-1 text-xs">
+                    <p class="text-white font-bold">Cabang: <span class="font-normal text-slate-300">Futsal, Basket, & Voli</span></p>
+                    <p class="text-slate-400 text-[11px]">Koordinator: Coach Dimas & Tim Scanner</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-[#151a24] rounded-2xl border border-[#1f2533] text-[11px] text-slate-400">
+            Jadwal kegiatan olahraga Anda dapat dilihat di menu <strong>Sesi</strong> atau <strong>Beranda</strong>.
+        </div>
+    </div>
+
+    <!-- TAB 6: KEBIJAKAN ABSENSI CONTENT -->
+    <div x-show="activeTab === 'kebijakan'"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         style="display: none;"
+         class="bg-[#11141c] border border-[#1f2533] rounded-3xl p-6 shadow-xl space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#1f2533]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                <span>Kebijakan Presensi Gaston YK</span>
+            </h3>
+            <span class="text-[10px] text-slate-500">SOP Kehadiran</span>
+        </div>
+
+        <div class="space-y-3 text-xs">
+            <div class="p-3.5 bg-[#0d1017] rounded-2xl border border-[#1f2533] space-y-1">
+                <p class="font-bold text-white flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#e50914]"></span>
+                    <span>1. Metode Check-in QR</span>
+                </p>
+                <p class="text-[11px] text-slate-400 leading-relaxed pl-4">
+                    Member wajib menunjukkan QR Code dari menu <strong>QR Absen</strong> kepada admin di lokasi. QR bersifat unik dan otomatis mencatat jam kedatangan.
+                </p>
+            </div>
+
+            <div class="p-3.5 bg-[#0d1017] rounded-2xl border border-[#1f2533] space-y-1">
+                <p class="font-bold text-white flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span>2. Pengajuan Izin Tidak Masuk</span>
+                </p>
+                <p class="text-[11px] text-slate-400 leading-relaxed pl-4">
+                    Jika tidak bisa hadir, kirim formulir izin paling lambat sebelum sesi berakhir. Izin yang telah di-approve tidak menurunkan statistik kehadiran Anda.
+                </p>
+            </div>
+
+            <div class="p-3.5 bg-[#0d1017] rounded-2xl border border-[#1f2533] space-y-1">
+                <p class="font-bold text-white flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>3. Ketentuan Walk-in</span>
+                </p>
+                <p class="text-[11px] text-slate-400 leading-relaxed pl-4">
+                    Member yang datang tanpa registrasi terlebih dahulu dapat langsung di-scan oleh admin jika slot lapangan masih tersedia.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 7: LIBUR NASIONAL CONTENT -->
+    <div x-show="activeTab === 'libur'"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         style="display: none;"
+         class="bg-[#11141c] border border-[#1f2533] rounded-3xl p-6 shadow-xl space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#1f2533]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-[#e50914]"></span>
+                <span>Kalender Libur & Cuti Bersama</span>
+            </h3>
+            <span class="text-[10px] text-slate-500">Tahun {{ date('Y') }}</span>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed">
+            Pada tanggal merah resmi, jadwal sesi latihan reguler disesuaikan sebagai berikut:
+        </p>
+
+        <div class="space-y-2.5 text-xs">
+            <div class="p-3 bg-[#0d1017] rounded-2xl border border-[#1f2533] flex items-center justify-between">
+                <div>
+                    <p class="font-bold text-white">17 Agustus</p>
+                    <p class="text-[11px] text-slate-400">Hari Proklamasi Kemerdekaan RI</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                    Libur Penuh
+                </span>
+            </div>
+
+            <div class="p-3 bg-[#0d1017] rounded-2xl border border-[#1f2533] flex items-center justify-between">
+                <div>
+                    <p class="font-bold text-white">25 Desember</p>
+                    <p class="text-[11px] text-slate-400">Hari Raya Natal</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    Shift Siang
+                </span>
+            </div>
+
+            <div class="p-3 bg-[#0d1017] rounded-2xl border border-[#1f2533] flex items-center justify-between">
+                <div>
+                    <p class="font-bold text-white">1 Januari</p>
+                    <p class="text-[11px] text-slate-400">Tahun Baru Masehi</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                    Libur Penuh
+                </span>
+            </div>
         </div>
     </div>
 

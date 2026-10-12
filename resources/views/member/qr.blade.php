@@ -13,6 +13,134 @@
         <p class="text-xs text-slate-400">Tunjukkan QR ini kepada admin saat tiba di GOR untuk verifikasi kehadiran.</p>
     </div>
 
+    @php
+        $selectedSessionId = request('session_id') ?: ($todaySessions->first()?->id ?? null);
+        $currentSession = $todaySessions->firstWhere('id', $selectedSessionId) ?? $todaySessions->first();
+    @endphp
+
+    <!-- Panel Kegiatan Hari Ini (Direct Activity Attendance Status & Picker) -->
+    <div class="bg-[#11141c] border border-[#1f2533] rounded-[28px] p-5 text-left shadow-xl space-y-3"
+         x-data="{
+             selectedId: {{ $currentSession?->id ?? 'null' }},
+             sessions: {{ Js::from($todaySessions->map(fn($s) => [
+                 'id' => $s->id,
+                 'sport_name' => $s->sport->name,
+                 'location_name' => $s->location->name,
+                 'time' => substr($s->start_time, 0, 5) . ' - ' . substr($s->end_time, 0, 5) . ' WIB',
+                 'status' => $s->status,
+                 'has_attended' => isset($attendances[$s->id]) && $attendances[$s->id]->status === 'present',
+                 'has_permission' => isset($permissions[$s->id]) && $permissions[$s->id]->status === 'approved',
+             ])) }}
+         }">
+        
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#e50914] animate-pulse"></span>
+                <h3 class="text-xs font-black uppercase tracking-wider text-white">Kegiatan Absensi Hari Ini</h3>
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 bg-[#090c12] px-2.5 py-1 rounded-full border border-[#1f2533]">
+                {{ now()->translatedFormat('d F Y') }}
+            </span>
+        </div>
+
+        @if($todaySessions->isEmpty())
+            <div class="p-4 rounded-2xl bg-[#0d1017] border border-[#1f2533] text-center">
+                <p class="text-xs font-bold text-slate-300">Tidak ada jadwal kegiatan olahraga hari ini</p>
+                <p class="text-[10px] text-slate-500 mt-0.5">Admin belum membuka sesi absensi untuk hari ini.</p>
+            </div>
+        @else
+            <!-- Pilihan Kegiatan Ketika Ada Lebih Dari 1 Sesi Hari Ini -->
+            @if($todaySessions->count() > 1)
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-300">
+                        Pilih Kegiatan Absensi (Tersedia {{ $todaySessions->count() }} Kegiatan):
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        @foreach($todaySessions as $ses)
+                            @php
+                                $isAtt = isset($attendances[$ses->id]) && $attendances[$ses->id]->status === 'present';
+                                $isPerm = isset($permissions[$ses->id]) && $permissions[$ses->id]->status === 'approved';
+                            @endphp
+                            <button type="button"
+                                    @click="selectedId = {{ $ses->id }}"
+                                    class="p-3 rounded-2xl text-left border transition-all flex items-start justify-between group"
+                                    :class="selectedId === {{ $ses->id }} ? 'bg-[#181216] border-[#e50914] ring-1 ring-[#e50914]' : 'bg-[#0d1017] border-[#1f2533] hover:border-slate-600'">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs font-black text-white group-hover:text-[#e50914] transition-colors">
+                                            {{ $ses->sport->name }}
+                                        </span>
+                                        <span class="text-[9px] font-bold text-slate-400">
+                                            {{ substr($ses->start_time, 0, 5) }} - {{ substr($ses->end_time, 0, 5) }}
+                                        </span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5 flex items-center space-x-1">
+                                        <svg class="w-3 h-3 text-[#e50914]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                        <span class="truncate">{{ $ses->location->name }}</span>
+                                    </p>
+                                </div>
+                                <div>
+                                    @if($isAtt)
+                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                            Hadir
+                                        </span>
+                                    @elseif($isPerm)
+                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                                            Izin
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+                                            Belum Absen
+                                        </span>
+                                    @endif
+                                </div>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Detail Sesi Aktif yang Terpilih -->
+            <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] flex items-center justify-between">
+                <div>
+                    <template x-for="s in sessions" :key="s.id">
+                        <div x-show="selectedId === s.id" class="space-y-0.5">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-black text-white" x-text="s.sport_name"></span>
+                                <span class="text-[10px] font-mono text-[#e50914]" x-text="s.time"></span>
+                            </div>
+                            <p class="text-[11px] text-slate-400" x-text="s.location_name"></p>
+                        </div>
+                    </template>
+                </div>
+
+                <div>
+                    <template x-for="s in sessions" :key="s.id">
+                        <div x-show="selectedId === s.id">
+                            <template x-if="s.has_attended">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    <span>Sudah Hadir</span>
+                                </span>
+                            </template>
+                            <template x-if="!s.has_attended && s.has_permission">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                                    Izin Disetujui
+                                </span>
+                            </template>
+                            <template x-if="!s.has_attended && !s.has_permission">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30 animate-pulse">
+                                    Siap Di-scan
+                                </span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        @endif
+
+    </div>
+
     <!-- Phone-Mockup Styled Attendance Card matching reference mockup center screen -->
     <div class="bg-[#11141c] border border-[#1f2533] rounded-[36px] p-6 sm:p-8 shadow-2xl shadow-black/80 relative flex flex-col items-center overflow-hidden">
         

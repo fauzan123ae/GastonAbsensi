@@ -3,7 +3,11 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" x-data="{
+    modalType: null, // 'shift', 'kebijakan', 'libur'
+    selectSessionModal: false,
+    activeShiftDay: 'senin'
+}">
 
     <!-- Top Row: Left Main Box (Halo, Admin + 4 Metrics) (8 Cols) + Right Brand Banner (4 Cols) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
@@ -525,7 +529,14 @@
                 </div>
 
                 <!-- Red Button Absen Masuk prominent matching mockup -->
-                @if($todaySessions->isNotEmpty())
+                @if($todaySessions->count() > 1)
+                    <button type="button"
+                            @click="selectSessionModal = true"
+                            class="w-full py-3 px-4 rounded-2xl bg-[#e50914] hover:bg-[#ff1e27] text-white font-bold text-xs shadow-lg shadow-[#e50914]/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                        <span>Absen Masuk ({{ $todaySessions->count() }} Sesi)</span>
+                    </button>
+                @elseif($todaySessions->count() === 1)
                     <a href="{{ route('admin.sessions.scan', $todaySessions->first()) }}"
                        class="w-full py-3 px-4 rounded-2xl bg-[#e50914] hover:bg-[#ff1e27] text-white font-bold text-xs shadow-lg shadow-[#e50914]/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
@@ -539,36 +550,81 @@
                     </a>
                 @endif
 
-                <!-- Detail Lokasi & Jam Kerja -->
+                <!-- Detail Lokasi & Jam Kegiatan Hari Ini -->
                 <div class="space-y-2 pt-1 text-xs">
-                    <!-- Lokasi Row -->
-                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between">
-                        <div class="flex items-center space-x-2.5">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <div>
-                                <p class="text-[10px] text-slate-500 font-semibold leading-none">Lokasi</p>
-                                <p class="text-xs font-bold text-slate-200 mt-0.5">Kampus Gaston YK</p>
+                    @if($todaySessions->isNotEmpty())
+                        @if($todaySessions->count() === 1)
+                            @php $singleSession = $todaySessions->first(); @endphp
+                            <!-- Lokasi Row -->
+                            <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <svg class="w-4 h-4 text-[#e50914] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <div>
+                                        <p class="text-[10px] text-slate-500 font-semibold leading-none">Lokasi Sesi</p>
+                                        <p class="text-xs font-bold text-slate-200 mt-0.5">{{ $singleSession->location->name ?? 'Lokasi Terdaftar' }}</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-lg bg-red-950/40 text-[10px] font-bold text-[#e50914] border border-red-900/40">
+                                    {{ $singleSession->sport->name ?? 'Kegiatan' }}
+                                </span>
                             </div>
-                        </div>
-                        <span class="text-[10px] font-bold text-emerald-400 flex items-center space-x-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                            <span>GPS Aktif</span>
-                        </span>
-                    </div>
 
-                    <!-- Jam Kerja Row -->
-                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between">
-                        <div class="flex items-center space-x-2.5">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <p class="text-[10px] text-slate-500 font-semibold leading-none">Jam Kerja</p>
-                                <p class="text-xs font-bold text-slate-200 mt-0.5">07:30 - 16:30</p>
+                            <!-- Jam Kegiatan Row -->
+                            <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <div>
+                                        <p class="text-[10px] text-slate-500 font-semibold leading-none">Jam Pelaksanaan</p>
+                                        <p class="text-xs font-bold text-slate-200 mt-0.5">
+                                            {{ substr($singleSession->start_time, 0, 5) }} - {{ substr($singleSession->end_time, 0, 5) }} WIB
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase {{ $singleSession->status === 'open' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                                    {{ $singleSession->status }}
+                                </span>
                             </div>
+                        @else
+                            <!-- Multi-kegiatan Card List -->
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="text-[11px] font-bold text-slate-400">Jadwal Sesi Hari Ini ({{ $todaySessions->count() }})</span>
+                                    <button type="button" @click="selectSessionModal = true" class="text-[10px] font-bold text-[#e50914] hover:underline">
+                                        Pilih Sesi &rarr;
+                                    </button>
+                                </div>
+                                @foreach($todaySessions as $s)
+                                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] hover:border-slate-700 transition-colors">
+                                        <div class="flex items-center justify-between mb-1.5">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="w-2 h-2 rounded-full {{ $s->status === 'open' ? 'bg-emerald-400' : 'bg-slate-500' }}"></span>
+                                                <span class="text-xs font-bold text-white">{{ $s->sport->name ?? 'Kegiatan' }}</span>
+                                            </div>
+                                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase {{ $s->status === 'open' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                                                {{ $s->status }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                            <div class="flex items-center space-x-1">
+                                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                <span>{{ $s->location->name ?? '-' }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-1 font-mono text-slate-300 font-semibold">
+                                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                <span>{{ substr($s->start_time, 0, 5) }} - {{ substr($s->end_time, 0, 5) }} WIB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    @else
+                        <!-- State jika tidak ada sesi hari ini -->
+                        <div class="p-3.5 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] text-center text-slate-400">
+                            <p class="text-xs font-semibold">Tidak ada jadwal sesi kegiatan hari ini</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Lokasi & jam akan muncul saat ada sesi aktif</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded-lg bg-slate-800 text-[10px] font-bold text-slate-400 border border-slate-700">
-                            Reguler
-                        </span>
-                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -583,43 +639,49 @@
                 </div>
 
                 <div class="space-y-2.5">
-                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#2d3748] transition-colors cursor-pointer">
+                    <!-- 1. Jadwal Shift Mingguan Item -->
+                    <div @click="modalType = 'shift'"
+                         class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#e50914]/50 hover:bg-[#141822] transition-all cursor-pointer group">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 rounded-xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                             </div>
                             <div>
-                                <p class="text-xs font-bold text-white">Jadwal Shift Mingguan</p>
-                                <p class="text-[10px] text-slate-500">Senin, 23 Juni 2025</p>
+                                <p class="text-xs font-bold text-white group-hover:text-[#e50914] transition-colors">Jadwal Shift Mingguan</p>
+                                <p class="text-[10px] text-slate-500">Lihat pembagian shift kegiatan minggu ini</p>
                             </div>
                         </div>
-                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
 
-                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#2d3748] transition-colors cursor-pointer">
+                    <!-- 2. Kebijakan Absensi Item -->
+                    <div @click="modalType = 'kebijakan'"
+                         class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#e50914]/50 hover:bg-[#141822] transition-all cursor-pointer group">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
                             <div>
-                                <p class="text-xs font-bold text-white">Kebijakan Absensi</p>
-                                <p class="text-[10px] text-slate-500">Senin, 16 Juni 2025</p>
+                                <p class="text-xs font-bold text-white group-hover:text-[#e50914] transition-colors">Kebijakan Absensi</p>
+                                <p class="text-[10px] text-slate-500">Ketentuan toleransi jam, izin & sanksi</p>
                             </div>
                         </div>
-                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
 
-                    <div class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#2d3748] transition-colors cursor-pointer">
+                    <!-- 3. Libur Nasional Item -->
+                    <div @click="modalType = 'libur'"
+                         class="p-3 rounded-2xl bg-[#090c12]/90 border border-[#1e2433] flex items-center justify-between text-xs hover:border-[#e50914]/50 hover:bg-[#141822] transition-all cursor-pointer group">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 rounded-xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             </div>
                             <div>
-                                <p class="text-xs font-bold text-white">Libur Nasional</p>
-                                <p class="text-[10px] text-slate-500">Kamis, 12 Juni 2025</p>
+                                <p class="text-xs font-bold text-white group-hover:text-[#e50914] transition-colors">Libur Nasional & Cuti Bersama</p>
+                                <p class="text-[10px] text-slate-500">Kalender operasional & penyesuaian jadwal</p>
                             </div>
                         </div>
-                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                 </div>
             </div>
@@ -634,7 +696,14 @@
                 <h3 class="text-sm font-black text-white mb-3">Quick Actions</h3>
 
                 <!-- 1. Absen Sekarang (Solid Red prominent button) -->
-                @if($todaySessions->isNotEmpty())
+                @if($todaySessions->count() > 1)
+                    <button type="button"
+                            @click="selectSessionModal = true"
+                            class="w-full py-3 px-4 rounded-2xl bg-[#e50914] hover:bg-[#ff1e27] text-white font-bold text-xs shadow-lg shadow-[#e50914]/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                        <span>Absen Sekarang ({{ $todaySessions->count() }} Kegiatan)</span>
+                    </button>
+                @elseif($todaySessions->count() === 1)
                     <a href="{{ route('admin.sessions.scan', $todaySessions->first()) }}"
                        class="w-full py-3 px-4 rounded-2xl bg-[#e50914] hover:bg-[#ff1e27] text-white font-bold text-xs shadow-lg shadow-[#e50914]/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
@@ -773,6 +842,320 @@
         <p class="text-[11px] text-slate-400 font-medium tracking-wide">
             Simple &bull; Modern &bull; Fast
         </p>
+    </div>
+
+    <!-- ================= MODALS SECTION ================= -->
+
+    <!-- 1. MODAL PILIH SESI ABSEN SEKARANG (JIKA ADA LEBIH DARI 1 KEGIATAN HARI INI) -->
+    <div x-show="selectSessionModal"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.away="selectSessionModal = false"
+             class="bg-[#10141d] border border-[#1e2433] rounded-[32px] max-w-lg w-full p-6 sm:p-7 shadow-2xl relative space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e2433]">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Pilih Kegiatan Hari Ini</h3>
+                        <p class="text-xs text-slate-400">Ada {{ $todaySessions->count() }} kegiatan olahraga yang terjadwal hari ini</p>
+                    </div>
+                </div>
+                <button type="button" @click="selectSessionModal = false" class="text-slate-400 hover:text-white p-1 rounded-xl bg-[#090c12] border border-[#1e2433]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-300">
+                Pilih sesi kegiatan yang ingin Anda buka scanner absensinya sekarang:
+            </p>
+
+            <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                @foreach($todaySessions as $index => $session)
+                    <a href="{{ route('admin.sessions.scan', $session) }}"
+                       class="p-4 rounded-2xl bg-[#090c12] border border-[#1e2433] hover:border-[#e50914] hover:bg-[#151924] transition-all flex items-center justify-between group block">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-red-950/60 border border-red-900/40 text-[#e50914] font-black text-xs flex items-center justify-center">
+                                {{ $index + 1 }}
+                            </span>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-black text-white group-hover:text-[#e50914] transition-colors">
+                                        {{ $session->sport->name }}
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {{ $session->status === 'open' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                                        {{ $session->status }}
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-400 mt-1 flex items-center space-x-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>{{ substr($session->start_time, 0, 5) }} - {{ substr($session->end_time, 0, 5) }} WIB</span>
+                                    <span>&bull;</span>
+                                    <span>{{ $session->location->name }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 text-right">
+                            <span class="text-[11px] font-black text-[#e50914] group-hover:translate-x-1 transition-transform flex items-center space-x-1">
+                                <span>Buka Scan</span>
+                                <span>&rarr;</span>
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+
+            <div class="pt-2 flex items-center justify-between text-xs">
+                <a href="{{ route('admin.sessions.create') }}" class="text-[#e50914] hover:underline font-bold text-xs flex items-center space-x-1">
+                    <span>+ Buat Sesi Baru Hari Ini</span>
+                </a>
+                <button type="button" @click="selectSessionModal = false" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL JADWAL SHIFT MINGGUAN -->
+    <div x-show="modalType === 'shift'"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.away="modalType = null"
+             class="bg-[#10141d] border border-[#1e2433] rounded-[32px] max-w-2xl w-full p-6 sm:p-7 shadow-2xl relative space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e2433]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Jadwal Shift Mingguan Petugas & Pelatih</h3>
+                        <p class="text-xs text-slate-400">Periode: Minggu Aktif ({{ now()->startOfWeek()->translatedFormat('d M') }} - {{ now()->endOfWeek()->translatedFormat('d M Y') }})</p>
+                    </div>
+                </div>
+                <button type="button" @click="modalType = null" class="text-slate-400 hover:text-white p-1 rounded-xl bg-[#090c12] border border-[#1e2433]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Tab Hari Shift -->
+            <div class="p-1 rounded-2xl bg-[#090c12] border border-[#1e2433] flex items-center overflow-x-auto space-x-1">
+                @foreach(['senin' => 'Senin', 'selasa' => 'Selasa', 'rabu' => 'Rabu', 'kamis' => 'Kamis', 'jumat' => 'Jumat', 'sabtu' => 'Sabtu', 'minggu' => 'Minggu'] as $key => $label)
+                    <button type="button"
+                            @click="activeShiftDay = '{{ $key }}'"
+                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
+                            :class="activeShiftDay === '{{ $key }}' ? 'bg-[#e50914] text-white shadow-md shadow-[#e50914]/30' : 'text-slate-400 hover:text-white'">
+                        {{ $label }}
+                    </button>
+                @endforeach
+            </div>
+
+            <!-- Content Shift List -->
+            <div class="space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <!-- Shift Pagi -->
+                    <div class="p-4 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                Shift Pagi (07:00 - 15:00)
+                            </span>
+                            <span class="text-[10px] text-slate-500 font-mono">GOR Manahan</span>
+                        </div>
+                        <div class="pt-1 space-y-1 text-slate-300">
+                            <p class="font-bold text-white text-xs">Supervisor: <span class="font-normal text-slate-300">Admin Utama</span></p>
+                            <p class="text-[11px] text-slate-400">Petugas Scanner: Tim Operator Lapangan A</p>
+                            <p class="text-[11px] text-slate-400">Kegiatan: Bulutangkis & Tenis Meja</p>
+                        </div>
+                    </div>
+
+                    <!-- Shift Sore / Malam -->
+                    <div class="p-4 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                                Shift Sore (15:00 - 22:00)
+                            </span>
+                            <span class="text-[10px] text-slate-500 font-mono">GOR Kartasura</span>
+                        </div>
+                        <div class="pt-1 space-y-1 text-slate-300">
+                            <p class="font-bold text-white text-xs">Supervisor: <span class="font-normal text-slate-300">Admin Gaston</span></p>
+                            <p class="text-[11px] text-slate-400">Petugas Scanner: Tim Operator Lapangan B</p>
+                            <p class="text-[11px] text-slate-400">Kegiatan: Futsal, Basket, & Voli</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#141822] border border-[#1e2433] text-[11px] text-slate-400 flex items-start space-x-2.5">
+                    <svg class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Pergantian shift antar petugas wajib konfirmasi minimal 4 jam sebelum jam operasional dimulai kepada Koordinator Gaston YK.</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#1e2433]">
+                <button type="button" @click="modalType = null" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL KEBIJAKAN ABSENSI -->
+    <div x-show="modalType === 'kebijakan'"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.away="modalType = null"
+             class="bg-[#10141d] border border-[#1e2433] rounded-[32px] max-w-2xl w-full p-6 sm:p-7 shadow-2xl relative space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e2433]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Kebijakan Absensi & Ketentuan Hadir</h3>
+                        <p class="text-xs text-slate-400">Standar Operasional Presensi Gaston YK</p>
+                    </div>
+                </div>
+                <button type="button" @click="modalType = null" class="text-slate-400 hover:text-white p-1 rounded-xl bg-[#090c12] border border-[#1e2433]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-3.5 text-xs text-slate-300">
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-1">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-[#e50914]"></span>
+                        <span>1. Waktu Scan Kehadiran</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 pl-4 leading-relaxed">
+                        Presensi dibuka 30 menit sebelum sesi olahraga dimulai sampai dengan 30 menit setelah sesi berakhir. Scan dilakukan dengan menunjukkan QR pribadi dari aplikasi ke petugas admin lapangan.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-1">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                        <span>2. Pengajuan Izin / Sakit</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 pl-4 leading-relaxed">
+                        Member yang berhalangan hadir wajib mengirimkan pengajuan izin via menu izin aplikasi disertai alasan yang jelas serta lampiran bukti (surat dokter / keterangan dinas). Izin yang disetujui tidak akan memotong attendance rate.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-1">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span>3. Peserta Walk-In (Tanpa Registrasi Awal)</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 pl-4 leading-relaxed">
+                        Member aktif yang belum terdaftar di sesi tetap diperbolehkan hadir jika kuota lapangan mencukupi. Petugas dapat menyetujui konfirmasi walk-in langsung dari layar scanner QR.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] space-y-1">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span>4. Batas Minimal Kehadiran</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 pl-4 leading-relaxed">
+                        Tingkat kehadiran minimum anggota aktif adalah 75% per bulan untuk tetap mempertahankan prioritas booking slot kegiatan dan turnamen Gaston YK.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#1e2433]">
+                <button type="button" @click="modalType = null" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs">
+                    Saya Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL LIBUR NASIONAL -->
+    <div x-show="modalType === 'libur'"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.away="modalType = null"
+             class="bg-[#10141d] border border-[#1e2433] rounded-[32px] max-w-2xl w-full p-6 sm:p-7 shadow-2xl relative space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e2433]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-red-950/60 border border-red-900/40 text-[#e50914] flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Kalender Libur Nasional & Cuti Bersama</h3>
+                        <p class="text-xs text-slate-400">Jadwal Penyesuaian Operasional GOR & Kegiatan Gaston YK</p>
+                    </div>
+                </div>
+                <button type="button" @click="modalType = null" class="text-slate-400 hover:text-white p-1 rounded-xl bg-[#090c12] border border-[#1e2433]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- List Libur Nasional -->
+            <div class="space-y-2.5 text-xs">
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-center px-3 py-1.5 bg-red-950/40 border border-red-900/40 rounded-xl">
+                            <span class="block text-sm font-black text-[#e50914]">17</span>
+                            <span class="block text-[9px] uppercase font-bold text-slate-400">Agu</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-xs">Hari Kemerdekaan Republik Indonesia</p>
+                            <p class="text-[11px] text-slate-400">Seluruh GOR libur, diganti turnamen internal 17 Agustus</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                        Libur Penuh
+                    </span>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-center px-3 py-1.5 bg-slate-800/60 border border-slate-700/40 rounded-xl">
+                            <span class="block text-sm font-black text-slate-300">25</span>
+                            <span class="block text-[9px] uppercase font-bold text-slate-400">Des</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-xs">Hari Raya Natal & Cuti Bersama</p>
+                            <p class="text-[11px] text-slate-400">Penyesuaian jam operasional (Sesi malam ditiadakan)</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        Shift Terbatas
+                    </span>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#090c12] border border-[#1e2433] flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-center px-3 py-1.5 bg-slate-800/60 border border-slate-700/40 rounded-xl">
+                            <span class="block text-sm font-black text-slate-300">01</span>
+                            <span class="block text-[9px] uppercase font-bold text-slate-400">Jan</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-xs">Tahun Baru Masehi</p>
+                            <p class="text-[11px] text-slate-400">Kegiatan rutin dijadwalkan ulang ke hari berikutnya</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/30">
+                        Libur Penuh
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-[#141822] border border-[#1e2433] text-[11px] text-slate-400">
+                Pemberitahuan perubahan tanggal sesi di hari libur akan disiarkan otomatis via notifikasi sistem dan WhatsApp kepada seluruh member terdaftar.
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#1e2433]">
+                <button type="button" @click="modalType = null" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
     </div>
 
 </div>

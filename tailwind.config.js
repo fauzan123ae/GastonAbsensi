@@ -2,6 +2,7 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -15,6 +16,27 @@ export default {
                 sans: ['Plus Jakarta Sans', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                // Semantic Theme Tokens
+                surface: {
+                    DEFAULT: 'var(--bg-surface)',
+                    page: 'var(--bg-page)',
+                    card: 'var(--bg-surface)',
+                    elevated: 'var(--bg-surface-2)',
+                    input: 'var(--bg-input)',
+                    hover: 'var(--bg-hover)',
+                    sidebar: 'var(--bg-sidebar)',
+                    header: 'var(--bg-header)',
+                },
+                content: {
+                    heading: 'var(--text-heading)',
+                    body: 'var(--text-body)',
+                    muted: 'var(--text-muted)',
+                    faint: 'var(--text-faint)',
+                },
+                line: {
+                    base: 'var(--border-base)',
+                    strong: 'var(--border-strong)',
+                },
                 gaston: {
                     dark: '#080a0f',
                     body: '#0a0d13',
@@ -44,9 +66,9 @@ export default {
                 }
             },
             boxShadow: {
-                'gaston': '0 8px 30px rgba(0, 0, 0, 0.7)',
-                'gaston-glow': '0 0 25px rgba(229, 9, 20, 0.4)',
-                'gaston-glow-lg': '0 0 45px rgba(229, 9, 20, 0.55)',
+                'gaston': 'var(--shadow-card)',
+                'gaston-glow': '0 0 25px rgba(229, 9, 20, 0.35)',
+                'gaston-glow-lg': '0 0 45px rgba(229, 9, 20, 0.5)',
                 'gaston-ring': '0 0 0 2px rgba(229, 9, 20, 0.6)',
             }
         },

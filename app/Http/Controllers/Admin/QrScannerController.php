@@ -21,7 +21,25 @@ class QrScannerController extends Controller
 
         $summary = $this->attendanceService->getSessionSummary($session);
 
-        return view('admin.sessions.scan', compact('session', 'summary'));
+        $recentScans = \App\Models\Attendance::with('user:id,name,member_id,photo')
+            ->where('session_id', $session->id)
+            ->latest('checked_in_at')
+            ->limit(10)
+            ->get()
+            ->map(fn($att) => [
+                'id' => $att->id,
+                'user_id' => $att->user_id,
+                'name' => $att->user?->name ?? 'Unknown',
+                'member_id' => $att->user?->member_id ?? '-',
+                'photo_url' => $att->user?->photo ? asset('storage/' . $att->user->photo) : null,
+                'time' => $att->checked_in_at ? $att->checked_in_at->format('H:i') : '-',
+                'is_walk_in' => (bool) $att->is_walk_in,
+                'status' => $att->status ?? 'present',
+            ])
+            ->values()
+            ->all();
+
+        return view('admin.sessions.scan', compact('session', 'summary', 'recentScans'));
     }
 
     /**
@@ -115,6 +133,16 @@ class QrScannerController extends Controller
                 'attendance' => [
                     'id' => $attendance->id,
                     'checked_in_at' => $attendance->checked_in_at->format('H:i'),
+                ],
+                'scan' => [
+                    'id' => $attendance->id,
+                    'user_id' => $member->id,
+                    'name' => $member->name,
+                    'member_id' => $member->member_id,
+                    'photo_url' => $member->photo ? asset('storage/' . $member->photo) : null,
+                    'time' => $attendance->checked_in_at->format('H:i'),
+                    'is_walk_in' => (bool) $attendance->is_walk_in,
+                    'status' => $attendance->status ?? 'present',
                 ],
                 'summary' => $summary,
             ]);

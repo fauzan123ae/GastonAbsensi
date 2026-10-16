@@ -12,9 +12,9 @@
                 <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#e50914] to-red-800 flex items-center justify-center text-white shadow-lg shadow-[#e50914]/25">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 </div>
-                <h2 class="text-2xl font-black text-white">Kelola Admin & Master</h2>
+                <h2 class="text-2xl font-black text-content-heading">Kelola Admin & Master</h2>
             </div>
-            <p class="text-xs text-slate-400">Hak istimewa Master Admin: Tambah, edit peran, dan kelola akses akun admin sistem Gaston.</p>
+            <p class="text-xs text-content-muted">Hak istimewa Master Admin: Tambah, edit peran, dan kelola akses akun admin sistem Gaston.</p>
         </div>
         <div>
             <a href="{{ route('admin.admins.create') }}"
@@ -26,26 +26,26 @@
     </div>
 
     <!-- Filter & Search Card -->
-    <div class="bg-[#141822] border border-[#1e2433] rounded-3xl p-4">
+    <div class="bg-surface-elevated border border-line-base rounded-3xl p-4">
         <form action="{{ route('admin.admins.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div class="sm:col-span-2 relative">
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama admin, email, atau kontak..."
-                       class="w-full bg-[#0d1017] border border-[#1e2433] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#e50914]">
+                       class="w-full bg-surface-input border border-line-base rounded-xl px-4 py-2.5 text-xs text-content-heading placeholder:text-content-faint focus:outline-none focus:border-[#e50914]">
             </div>
             <div>
-                <select name="role" class="w-full bg-[#0d1017] border border-[#1e2433] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#e50914]">
+                <select name="role" class="w-full bg-surface-input border border-line-base rounded-xl px-3 py-2.5 text-xs text-content-heading focus:outline-none focus:border-[#e50914]">
                     <option value="">Semua Peran</option>
                     <option value="master_admin" {{ $role === 'master_admin' ? 'selected' : '' }}>👑 Master Admin</option>
                     <option value="admin" {{ $role === 'admin' ? 'selected' : '' }}>🛡️ Admin Biasa</option>
                 </select>
             </div>
             <div class="flex space-x-2">
-                <select name="status" class="bg-[#0d1017] border border-[#1e2433] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#e50914] flex-1">
+                <select name="status" class="bg-surface-input border border-line-base rounded-xl px-3 py-2.5 text-xs text-content-heading focus:outline-none focus:border-[#e50914] flex-1">
                     <option value="">Semua Status</option>
                     <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Aktif</option>
                     <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                 </select>
-                <button type="submit" class="bg-[#1b212c] hover:bg-slate-800 text-slate-200 font-bold px-4 py-2.5 rounded-xl text-xs transition-colors border border-[#1e2433]">
+                <button type="submit" class="bg-surface-elevated hover:bg-surface-elevated text-content-body font-bold px-4 py-2.5 rounded-xl text-xs transition-colors border border-line-base">
                     Filter
                 </button>
             </div>
@@ -53,11 +53,11 @@
     </div>
 
     <!-- Admin List (Desktop Table + Mobile Cards) -->
-    <div class="bg-[#141822] border border-[#1e2433] rounded-3xl overflow-hidden shadow-xl">
+    <div class="bg-surface-elevated border border-line-base rounded-3xl overflow-hidden shadow-xl">
         <!-- Desktop Table (md and above) -->
         <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-[#0e1117] text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-[#1e2433]">
+            <table class="w-full text-left text-sm text-content-body">
+                <thead class="bg-surface-elevated text-xs font-bold uppercase tracking-wider text-content-muted border-b border-line-base">
                     <tr>
                         <th class="px-6 py-4">Akun Pengelola</th>
                         <th class="px-6 py-4">Peran (Role)</th>
@@ -66,12 +66,12 @@
                         <th class="px-6 py-4 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#1e2433]/70">
+                <tbody class="divide-y divide-line-base/70">
                     @forelse($admins as $a)
-                        <tr class="hover:bg-[#1a202c]/50 transition-colors {{ $a->id === auth()->id() ? 'bg-red-950/10' : '' }}">
+                        <tr class="hover:bg-surface-elevated/50 transition-colors {{ $a->id === auth()->id() ? 'bg-red-950/10' : '' }}">
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3.5">
-                                    <div class="w-10 h-10 rounded-full overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-elevated border border-line-strong flex-shrink-0 flex items-center justify-center text-xs font-bold text-content-heading shadow-sm">
                                         @if($a->photo)
                                             <img src="{{ asset('storage/' . $a->photo) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
                                         @else
@@ -80,12 +80,12 @@
                                     </div>
                                     <div class="min-w-0">
                                         <div class="flex items-center space-x-2">
-                                            <span class="font-bold text-white text-sm truncate">{{ $a->name }}</span>
+                                            <span class="font-bold text-content-heading text-sm truncate">{{ $a->name }}</span>
                                             @if($a->id === auth()->id())
                                                 <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/40">Anda</span>
                                             @endif
                                         </div>
-                                        <span class="text-xs text-slate-400 block truncate">{{ $a->email }}</span>
+                                        <span class="text-xs text-content-muted block truncate">{{ $a->email }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -102,7 +102,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-400 whitespace-nowrap font-mono">
+                            <td class="px-6 py-4 text-xs text-content-muted whitespace-nowrap font-mono">
                                 {{ $a->phone ?: '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -124,7 +124,7 @@
                                     @endif
 
                                     <a href="{{ route('admin.admins.edit', $a) }}"
-                                       class="p-2 rounded-xl bg-[#1b212c] text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-bold transition-colors border border-[#1e2433]"
+                                       class="p-2 rounded-xl bg-surface-elevated text-content-body hover:text-content-heading hover:bg-surface-elevated text-xs font-bold transition-colors border border-line-base"
                                        title="Edit Admin">
                                         Edit
                                     </a>
@@ -145,7 +145,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500 text-xs">
+                            <td colspan="5" class="px-6 py-12 text-center text-content-faint text-xs">
                                 Tidak ada data pengelola yang cocok dengan filter pencarian.
                             </td>
                         </tr>
@@ -155,12 +155,12 @@
         </div>
 
         <!-- Mobile Card View (block on small screens, hidden on md) -->
-        <div class="block md:hidden divide-y divide-[#1e2433]/70">
+        <div class="block md:hidden divide-y divide-line-base/70">
             @forelse($admins as $a)
-                <div class="p-4 space-y-3 hover:bg-[#1a202c]/30 transition-colors {{ $a->id === auth()->id() ? 'bg-red-950/10' : '' }}">
+                <div class="p-4 space-y-3 hover:bg-surface-elevated/30 transition-colors {{ $a->id === auth()->id() ? 'bg-red-950/10' : '' }}">
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center space-x-3 min-w-0">
-                            <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+                            <div class="w-11 h-11 rounded-2xl overflow-hidden bg-surface-elevated border border-line-strong flex-shrink-0 flex items-center justify-center text-xs font-bold text-content-heading shadow-sm">
                                 @if($a->photo)
                                     <img src="{{ asset('storage/' . $a->photo) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
                                 @else
@@ -169,12 +169,12 @@
                             </div>
                             <div class="min-w-0">
                                 <div class="flex items-center space-x-1.5">
-                                    <h4 class="text-sm font-bold text-white truncate">{{ $a->name }}</h4>
+                                    <h4 class="text-sm font-bold text-content-heading truncate">{{ $a->name }}</h4>
                                     @if($a->id === auth()->id())
                                         <span class="px-1.5 py-0.5 rounded text-[8px] font-black bg-[#e50914]/20 text-[#e50914] border border-[#e50914]/40">Anda</span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-slate-400 truncate">{{ $a->email }}</p>
+                                <p class="text-xs text-content-muted truncate">{{ $a->email }}</p>
                             </div>
                         </div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase {{ $a->isActive() ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30' }}">
@@ -182,7 +182,7 @@
                         </span>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs pt-1 border-t border-[#1e2433]/40">
+                    <div class="flex items-center justify-between text-xs pt-1 border-t border-line-base/40">
                         <div class="flex items-center space-x-2">
                             @if($a->role === 'master_admin')
                                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-red-500/20 to-amber-500/20 text-rose-300 border border-rose-500/40">
@@ -193,7 +193,7 @@
                                     🛡️ Admin Biasa
                                 </span>
                             @endif
-                            <span class="text-[10px] text-slate-400 font-mono">{{ $a->phone ?: 'No Phone' }}</span>
+                            <span class="text-[10px] text-content-muted font-mono">{{ $a->phone ?: 'No Phone' }}</span>
                         </div>
 
                         <div class="flex items-center space-x-1.5">
@@ -207,7 +207,7 @@
                             @endif
 
                             <a href="{{ route('admin.admins.edit', $a) }}"
-                               class="px-2.5 py-1 rounded-xl bg-[#1b212c] text-slate-300 text-[11px] font-bold border border-[#1e2433]">
+                               class="px-2.5 py-1 rounded-xl bg-surface-elevated text-content-body text-[11px] font-bold border border-line-base">
                                 Edit
                             </a>
 
@@ -224,14 +224,14 @@
                     </div>
                 </div>
             @empty
-                <div class="p-8 text-center text-slate-500 text-xs">
+                <div class="p-8 text-center text-content-faint text-xs">
                     Tidak ada data pengelola yang cocok dengan filter pencarian.
                 </div>
             @endforelse
         </div>
 
         @if($admins->hasPages())
-            <div class="p-4 bg-[#0e1117] border-t border-[#1e2433]">
+            <div class="p-4 bg-surface-elevated border-t border-line-base">
                 {{ $admins->links() }}
             </div>
         @endif

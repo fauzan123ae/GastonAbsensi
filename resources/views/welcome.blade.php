@@ -8,12 +8,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#080a0f">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('gaston-theme');
+                var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+                var isLight = saved ? (saved === 'light') : prefersLight;
+                if (isLight) {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', '#f4f6fa');
+                } else {
+                    document.documentElement.classList.remove('light');
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-[#080a0f] gaston-stripes-bg gaston-diagonal-lines text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-[#e50914] selection:text-white relative overflow-x-hidden">
+<body class="bg-surface-page gaston-stripes-bg gaston-diagonal-lines text-content-body min-h-screen flex flex-col justify-between antialiased selection:bg-[#e50914] selection:text-white relative overflow-x-hidden transition-colors duration-200">
     @include('components.mobile-splash')
 
     <!-- Ambient Glow & Red Angled Slashes in Background -->
@@ -21,21 +43,24 @@
     <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-red-900/15 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute top-1/4 right-0 w-80 h-80 pointer-events-none opacity-25">
         <div class="w-full h-1.5 bg-[#e50914] transform -rotate-45 translate-y-6 shadow-[0_0_12px_#e50914]"></div>
-        <div class="w-full h-1 bg-white transform -rotate-45 translate-y-16"></div>
+        <div class="w-full h-1 bg-line-strong transform -rotate-45 translate-y-16"></div>
         <div class="w-full h-2 bg-[#e50914] transform -rotate-45 translate-y-28 shadow-[0_0_12px_#e50914]"></div>
     </div>
 
     <!-- Header Navbar -->
-    <header class="border-b border-[#1f2533]/80 bg-[#0d1017]/80 backdrop-blur-md sticky top-0 z-30">
+    <header class="border-b border-line-base bg-surface-header/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200">
         <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <img src="{{ asset('logo/logo.png') }}" alt="Gaston Logo" class="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(229,9,20,0.4)]">
                 <div>
-                    <h1 class="font-black text-xs tracking-wider text-white uppercase leading-tight">ABSENSI<br><span class="text-[#e50914]">GASTON YK</span></h1>
+                    <h1 class="font-black text-xs tracking-wider text-content-heading uppercase leading-tight">ABSENSI<br><span class="text-[#e50914]">GASTON YK</span></h1>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
+                <!-- Theme Toggle Button -->
+                <x-theme-toggle />
+
                 @auth
                     @if(auth()->user()->role === 'admin')
                         <a href="{{ route('admin.dashboard') }}"
@@ -50,7 +75,7 @@
                     @endif
                 @else
                     <a href="{{ route('login') }}"
-                       class="px-5 py-2.5 rounded-2xl bg-[#11141c] hover:bg-[#181d29] border border-[#1f2533] text-white font-bold text-xs transition-colors">
+                       class="px-5 py-2.5 rounded-2xl bg-surface hover:bg-surface-elevated border border-line-base text-content-heading font-bold text-xs transition-colors">
                         Masuk
                     </a>
                     <a href="{{ route('register') }}"
@@ -71,19 +96,19 @@
             <img src="{{ asset('logo/logo.png') }}" alt="Gaston Logo" class="h-28 sm:h-36 w-auto object-contain relative z-10 drop-shadow-[0_0_35px_rgba(229,9,20,0.45)]">
         </div>
 
-        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#11141c] border border-[#1f2533] text-xs font-bold text-slate-300 mb-4">
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-surface border border-line-base text-xs font-bold text-content-body mb-4">
             <span class="w-2 h-2 rounded-full bg-[#e50914] animate-pulse"></span>
-            <span>GASTON YK</span>
-            <span class="text-slate-600">&bull;</span>
+            <span class="text-content-heading">GASTON YK</span>
+            <span class="text-content-faint">&bull;</span>
             <span class="text-[#e50914] font-black uppercase">One Team One Goal</span>
         </div>
 
-        <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        <h2 class="text-3xl sm:text-5xl font-black text-content-heading tracking-tight leading-tight">
             Sistem Absensi Digital<br>
             <span class="text-[#e50914]">Komunitas Olahraga Gaston</span>
         </h2>
 
-        <p class="text-sm sm:text-base text-slate-400 mt-4 max-w-2xl leading-relaxed">
+        <p class="text-sm sm:text-base text-content-muted mt-4 max-w-2xl leading-relaxed">
             Presensi instan dengan QR code token, pencatatan otomatis di lapangan, pengelolaan jadwal sesi latihan, dan rekapitulasi kehadiran komprehensif.
         </p>
 
@@ -94,49 +119,49 @@
                 Mulai Presensi Sekarang
             </a>
             <a href="{{ route('register') }}"
-               class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#11141c] hover:bg-[#181d29] border border-[#1f2533] text-slate-200 hover:text-white font-bold text-xs transition-colors">
+               class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-surface hover:bg-surface-elevated border border-line-base text-content-body hover:text-content-heading font-bold text-xs transition-colors">
                 Daftar Member Baru
             </a>
         </div>
 
         <!-- 3 Feature Highlights (Charcoal Cards) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12 w-full text-left">
-            <div class="p-5 rounded-3xl bg-[#11141c] border border-[#1f2533] shadow-xl">
-                <div class="w-10 h-10 rounded-2xl bg-[#0d1017] text-[#e50914] border border-[#1f2533] flex items-center justify-center font-bold mb-3">
+            <div class="p-5 rounded-3xl bg-surface border border-line-base shadow-xl">
+                <div class="w-10 h-10 rounded-2xl icon-chip icon-chip-red font-bold mb-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                 </div>
-                <h3 class="text-sm font-black text-white">QR Token Pribadi</h3>
-                <p class="text-xs text-slate-400 mt-1">Setiap member memiliki QR token unik permanen untuk check-in cepat di GOR.</p>
+                <h3 class="text-sm font-black text-content-heading">QR Token Pribadi</h3>
+                <p class="text-xs text-content-muted mt-1">Setiap member memiliki QR token unik permanen untuk check-in cepat di GOR.</p>
             </div>
 
-            <div class="p-5 rounded-3xl bg-[#11141c] border border-[#1f2533] shadow-xl">
-                <div class="w-10 h-10 rounded-2xl bg-[#0d1017] text-[#e50914] border border-[#1f2533] flex items-center justify-center font-bold mb-3">
+            <div class="p-5 rounded-3xl bg-surface border border-line-base shadow-xl">
+                <div class="w-10 h-10 rounded-2xl icon-chip icon-chip-red font-bold mb-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 </div>
-                <h3 class="text-sm font-black text-white">Manajemen Sesi & Izin</h3>
-                <p class="text-xs text-slate-400 mt-1">Jadwal latihan terkoordinasi dan alur pengajuan izin dengan bukti berkas.</p>
+                <h3 class="text-sm font-black text-content-heading">Manajemen Sesi & Izin</h3>
+                <p class="text-xs text-content-muted mt-1">Jadwal latihan terkoordinasi dan alur pengajuan izin dengan bukti berkas.</p>
             </div>
 
-            <div class="p-5 rounded-3xl bg-[#11141c] border border-[#1f2533] shadow-xl">
-                <div class="w-10 h-10 rounded-2xl bg-[#0d1017] text-[#e50914] border border-[#1f2533] flex items-center justify-center font-bold mb-3">
+            <div class="p-5 rounded-3xl bg-surface border border-line-base shadow-xl">
+                <div class="w-10 h-10 rounded-2xl icon-chip icon-chip-red font-bold mb-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 </div>
-                <h3 class="text-sm font-black text-white">Laporan Real-Time</h3>
-                <p class="text-xs text-slate-400 mt-1">Audit log aktivitas dan rekap absensi otomatis terverifikasi sistem.</p>
+                <h3 class="text-sm font-black text-content-heading">Laporan Real-Time</h3>
+                <p class="text-xs text-content-muted mt-1">Audit log aktivitas dan rekap absensi otomatis terverifikasi sistem.</p>
             </div>
         </div>
 
     </main>
 
     <!-- Footer matching showcase image bottom bar -->
-    <footer class="border-t border-[#1f2533]/80 bg-[#090c12] py-6 px-6">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+    <footer class="border-t border-line-base bg-surface-header py-6 px-6 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-content-faint gap-3">
             <div class="flex items-center space-x-2">
                 <span class="w-6 h-[2px] bg-[#e50914]"></span>
-                <span class="text-white font-medium">Mobile & Desktop UI/UX</span>
+                <span class="text-content-heading font-medium">Mobile & Desktop UI/UX</span>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="text-slate-400">Simple &bull; Modern &bull; Functional</span>
+                <span class="text-content-muted">Simple &bull; Modern &bull; Functional</span>
             </div>
         </div>
     </footer>

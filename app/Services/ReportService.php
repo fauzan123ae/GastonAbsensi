@@ -54,7 +54,7 @@ class ReportService
                     ->from('attendances')
                     ->whereColumn('attendances.session_id', 'session_participants.session_id')
                     ->whereColumn('attendances.user_id', 'session_participants.user_id')
-                    ->where('attendances.is_walk_in', true);
+                    ->whereRaw('attendances.is_walk_in = TRUE');
             });
         if ($memberId) {
             $registeredQuery->where('user_id', $memberId);

@@ -9,29 +9,29 @@
         <div>
             <div class="flex items-center space-x-2 mb-1">
                 <img src="{{ asset('logo/logo.png') }}" alt="Gaston Logo" class="h-6 w-auto object-contain">
-                <h2 class="text-2xl font-black text-white">Permohonan Izin Member</h2>
+                <h2 class="text-2xl font-black text-content-heading">Permohonan Izin Member</h2>
             </div>
-            <p class="text-xs text-slate-400">Tinjau permohonan izin tidak hadir dari peserta sesi olahraga.</p>
+            <p class="text-xs text-content-muted">Tinjau permohonan izin tidak hadir dari peserta sesi olahraga.</p>
         </div>
     </div>
 
     <!-- Status Filters -->
     <div class="flex items-center space-x-2">
-        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider mr-2">Status:</span>
+        <span class="text-xs text-content-muted font-bold uppercase tracking-wider mr-2">Status:</span>
         @foreach(['all' => 'Semua', 'pending' => 'Menunggu Review', 'approved' => 'Disetujui', 'rejected' => 'Ditolak'] as $key => $label)
             <a href="{{ route('admin.permissions.index', ['status' => $key]) }}"
-               class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $status === $key ? 'bg-gradient-to-r from-gaston-orange to-orange-600 text-white shadow-lg shadow-gaston-orange/20' : 'bg-[#141822] text-slate-400 hover:text-white border border-gaston-border' }}">
+               class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $status === $key ? 'bg-gradient-to-r from-gaston-orange to-orange-600 text-white shadow-lg shadow-gaston-orange/20' : 'bg-surface-elevated text-content-muted hover:text-content-heading border border-line-base' }}">
                 {{ $label }}
             </a>
         @endforeach
     </div>
 
     <!-- Permissions Table & Mobile Cards -->
-    <div class="bg-[#141822] border border-gaston-border rounded-3xl overflow-hidden shadow-xl">
+    <div class="bg-surface-elevated border border-line-base rounded-3xl overflow-hidden shadow-xl">
         <!-- Desktop Table (md and above) -->
         <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-[#0d1017] text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-gaston-border">
+            <table class="w-full text-left text-sm text-content-body">
+                <thead class="bg-surface-input text-xs font-bold uppercase tracking-wider text-content-muted border-b border-line-base">
                     <tr>
                         <th class="px-6 py-4">Member</th>
                         <th class="px-6 py-4">Sesi & Tanggal</th>
@@ -42,17 +42,17 @@
                 </thead>
                 <tbody class="divide-y divide-gaston-border/70">
                     @forelse($permissions as $perm)
-                        <tr class="hover:bg-[#1a202c]/50 transition-colors">
+                        <tr class="hover:bg-surface-elevated/50 transition-colors">
                             <td class="px-6 py-4">
-                                <p class="font-bold text-white">{{ $perm->user->name }}</p>
+                                <p class="font-bold text-content-heading">{{ $perm->user->name }}</p>
                                 <p class="text-[11px] font-mono font-bold text-gaston-orange">{{ $perm->user->member_id }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="font-bold text-white">{{ $perm->session->sport->name }}</p>
-                                <p class="text-xs text-slate-400 mt-0.5">{{ $perm->session->date->format('d M Y') }} • {{ $perm->session->location->name }}</p>
+                                <p class="font-bold text-content-heading">{{ $perm->session->sport->name }}</p>
+                                <p class="text-xs text-content-muted mt-0.5">{{ $perm->session->date->format('d M Y') }} • {{ $perm->session->location->name }}</p>
                             </td>
                             <td class="px-6 py-4 max-w-xs">
-                                <p class="text-xs text-slate-300">{{ $perm->reason }}</p>
+                                <p class="text-xs text-content-body">{{ $perm->reason }}</p>
                                 @if($perm->proof)
                                     <a href="{{ route('permissions.proof', $perm) }}" target="_blank" class="inline-flex items-center space-x-1 text-[11px] text-gaston-orange hover:underline mt-1 font-bold">
                                         <span>📎 Lihat Bukti Foto / Dokumen</span>
@@ -88,16 +88,16 @@
 
                                         <!-- Reject Modal -->
                                         <div x-show="rejectOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm text-left">
-                                            <div @click.away="rejectOpen = false" class="bg-[#141822] border border-gaston-border rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                                                <h3 class="text-base font-bold text-white">Tolak Permohonan Izin</h3>
-                                                <p class="text-xs text-slate-400">Masukkan alasan penolakan yang akan ditampilkan kepada member {{ $perm->user->name }}:</p>
+                                            <div @click.away="rejectOpen = false" class="bg-surface-elevated border border-line-base rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                                                <h3 class="text-base font-bold text-content-heading">Tolak Permohonan Izin</h3>
+                                                <p class="text-xs text-content-muted">Masukkan alasan penolakan yang akan ditampilkan kepada member {{ $perm->user->name }}:</p>
                                                 <form action="{{ route('admin.permissions.update', $perm) }}" method="POST" class="space-y-4">
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="status" value="rejected">
-                                                    <textarea name="review_note" rows="3" required placeholder="Contoh: Dokumen bukti tidak jelas / kuota izin habis" class="w-full bg-[#0d1017] border border-gaston-border rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-gaston-orange"></textarea>
+                                                    <textarea name="review_note" rows="3" required placeholder="Contoh: Dokumen bukti tidak jelas / kuota izin habis" class="w-full bg-surface-input border border-line-base rounded-xl p-3 text-xs text-content-body focus:outline-none focus:border-gaston-orange"></textarea>
                                                     <div class="flex items-center justify-end space-x-2 pt-2">
-                                                        <button type="button" @click="rejectOpen = false" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">Batal</button>
+                                                        <button type="button" @click="rejectOpen = false" class="px-3 py-1.5 rounded-xl bg-surface-elevated text-content-body text-xs font-bold">Batal</button>
                                                         <button type="submit" class="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs">Konfirmasi Tolak</button>
                                                     </div>
                                                 </form>
@@ -105,8 +105,8 @@
                                         </div>
                                     </div>
                                 @else
-                                    <div class="text-xs text-slate-400">
-                                        <p class="text-slate-500">Direview oleh {{ $perm->reviewer->name ?? 'Admin' }}</p>
+                                    <div class="text-xs text-content-muted">
+                                        <p class="text-content-faint">Direview oleh {{ $perm->reviewer->name ?? 'Admin' }}</p>
                                         @if($perm->review_note)
                                             <p class="text-[11px] text-rose-400 mt-1 italic">"{{ $perm->review_note }}"</p>
                                         @endif
@@ -116,7 +116,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+                            <td colspan="5" class="px-6 py-8 text-center text-content-faint">
                                 Tidak ada permohonan izin dalam filter ini.
                             </td>
                         </tr>
@@ -135,10 +135,10 @@
                         default => 'bg-amber-500/15 text-amber-300 border-amber-500/30',
                     };
                 @endphp
-                <div class="p-4 space-y-3 hover:bg-[#1a202c]/40 transition-colors" x-data="{ rejectOpen: false }">
+                <div class="p-4 space-y-3 hover:bg-surface-elevated/40 transition-colors" x-data="{ rejectOpen: false }">
                     <div class="flex items-start justify-between gap-2">
                         <div>
-                            <p class="font-bold text-white text-sm">{{ $perm->user->name }}</p>
+                            <p class="font-bold text-content-heading text-sm">{{ $perm->user->name }}</p>
                             <p class="text-[10px] font-mono font-bold text-gaston-orange">{{ $perm->user->member_id }}</p>
                         </div>
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeClass }}">
@@ -146,15 +146,15 @@
                         </span>
                     </div>
 
-                    <div class="p-3 rounded-2xl bg-[#0d1017]/70 border border-gaston-border/50 text-xs space-y-1.5">
+                    <div class="p-3 rounded-2xl bg-surface-input/70 border border-line-base/50 text-xs space-y-1.5">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-slate-200">{{ $perm->session->sport->name }}</span>
-                            <span class="text-slate-400 text-[10px]">{{ $perm->session->date->format('d M Y') }}</span>
+                            <span class="font-bold text-content-body">{{ $perm->session->sport->name }}</span>
+                            <span class="text-content-muted text-[10px]">{{ $perm->session->date->format('d M Y') }}</span>
                         </div>
-                        <p class="text-[11px] text-slate-400">{{ $perm->session->location->name }}</p>
-                        <div class="pt-1.5 border-t border-gaston-border/40">
-                            <span class="text-[10px] text-slate-500 block uppercase font-semibold">Alasan:</span>
-                            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">{{ $perm->reason }}</p>
+                        <p class="text-[11px] text-content-muted">{{ $perm->session->location->name }}</p>
+                        <div class="pt-1.5 border-t border-line-base/40">
+                            <span class="text-[10px] text-content-faint block uppercase font-semibold">Alasan:</span>
+                            <p class="text-xs text-content-body mt-0.5 leading-relaxed">{{ $perm->reason }}</p>
                         </div>
                         @if($perm->proof)
                             <div class="pt-1">
@@ -188,34 +188,34 @@
 
                         <!-- Mobile Reject Modal -->
                         <div x-show="rejectOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm text-left">
-                            <div @click.away="rejectOpen = false" class="bg-[#141822] border border-gaston-border rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                                <h3 class="text-base font-bold text-white">Tolak Permohonan Izin</h3>
-                                <p class="text-xs text-slate-400">Masukkan alasan penolakan:</p>
+                            <div @click.away="rejectOpen = false" class="bg-surface-elevated border border-line-base rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                                <h3 class="text-base font-bold text-content-heading">Tolak Permohonan Izin</h3>
+                                <p class="text-xs text-content-muted">Masukkan alasan penolakan:</p>
                                 <form action="{{ route('admin.permissions.update', $perm) }}" method="POST" class="space-y-4">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="rejected">
-                                    <textarea name="review_note" rows="3" required placeholder="Alasan penolakan..." class="w-full bg-[#0d1017] border border-gaston-border rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-gaston-orange"></textarea>
+                                    <textarea name="review_note" rows="3" required placeholder="Alasan penolakan..." class="w-full bg-surface-input border border-line-base rounded-xl p-3 text-xs text-content-body focus:outline-none focus:border-gaston-orange"></textarea>
                                     <div class="flex items-center justify-end space-x-2 pt-2">
-                                        <button type="button" @click="rejectOpen = false" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">Batal</button>
+                                        <button type="button" @click="rejectOpen = false" class="px-3 py-1.5 rounded-xl bg-surface-elevated text-content-body text-xs font-bold">Batal</button>
                                         <button type="submit" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs">Konfirmasi Tolak</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     @else
-                        <p class="text-[10px] text-slate-500 text-right">Direview oleh {{ $perm->reviewer->name ?? 'Admin' }}</p>
+                        <p class="text-[10px] text-content-faint text-right">Direview oleh {{ $perm->reviewer->name ?? 'Admin' }}</p>
                     @endif
                 </div>
             @empty
-                <div class="p-6 text-center text-slate-500 text-xs">
+                <div class="p-6 text-center text-content-faint text-xs">
                     Tidak ada permohonan izin dalam filter ini.
                 </div>
             @endforelse
         </div>
 
         @if($permissions->hasPages())
-            <div class="px-6 py-4 border-t border-gaston-border">
+            <div class="px-6 py-4 border-t border-line-base">
                 {{ $permissions->links() }}
             </div>
         @endif
